@@ -5,3 +5,4 @@ src_nad
 .DS_STORE
 yarn.lock
 package-lock.json
+dist

@@ -1,0 +1,7 @@
+build
+node_modules
+build
+src_nad
+.DS_STORE
+yarn.lock
+package-lock.json

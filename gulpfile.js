@@ -10,7 +10,37 @@ const postcss = require('gulp-postcss');
 const htmlmin = require('gulp-htmlmin');
 const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
+
+// browsersync setup
+const browserSync= require('browser-sync');
+const server = browserSync.create();
+
+function reload(done) {
+  server.reload();
+  done();
+}
+
+function serve(done) {
+  server.init({
+    server: {
+      baseDir: './'
+    }
+  });
+  done();
+}
+// end
+
 var replace = require('gulp-replace');
+
+
+function browsersync () {
+     bs.init({
+        server: {
+            baseDir: "./"
+        },
+         proxy: "localhost:8080"
+    });   
+}
 
 
 // File paths
@@ -68,7 +98,7 @@ function watchTask(){
     watch([files.scssPath, files.jsPath, files.htmlPath], 
         series(
             parallel(scssTask, jsTask, htmlTask),
-            cacheBustTask
+            cacheBustTask, reload
         )
     );    
 }
@@ -78,6 +108,6 @@ function watchTask(){
 // then runs cacheBust, then watch task
 exports.default = series(
     parallel(scssTask, jsTask, htmlTask), 
-    cacheBustTask,
+    cacheBustTask,serve,
     watchTask
 );

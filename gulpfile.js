@@ -10,8 +10,10 @@ const postcss = require('gulp-postcss');
 const htmlmin = require('gulp-htmlmin');
 const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
+const imagemin = require('gulp-imagemin');
+const webp = require('gulp-webp');
 
-// browsersync setup
+// browsersync setup 
 const browserSync= require('browser-sync');
 const server = browserSync.create();
 
@@ -36,7 +38,7 @@ var replace = require('gulp-replace');
 function browsersync () {
      bs.init({
         server: {
-            baseDir: "./"
+            baseDir: "./dist/"
         },
          proxy: "localhost:8080"
     });   
@@ -47,7 +49,8 @@ function browsersync () {
 const files = { 
     scssPath: 'src/scss/**/*.scss',
     jsPath: 'src/js/**/*.js',
-    htmlPath: 'src/**/*.html'
+    htmlPath: 'src/**/*.html',
+    imagePath: 'src/images/*'
 }
 
 // Sass task: compiles the style.scss file into style.css
@@ -59,6 +62,15 @@ function scssTask(){
         .pipe(sourcemaps.write('.')) // write sourcemaps file in current directory
         .pipe(dest('dist/css')
     ); // put final CSS in dist folder
+}
+
+
+// Image minification
+function imgSquash() {
+		return src(files.imagePath)
+		.pipe(imagemin())
+		.pipe(webp())
+		.pipe(dest("dist/images"));
 }
 
 // JS task: concatenates and uglifies JS files to script.js
@@ -76,7 +88,7 @@ function jsTask(){
 
 // Gulp task to minify HTML files
 function htmlTask() {
-  return src([files.htmlPath])
+	  return src([files.htmlPath])
     .pipe(htmlmin({
       collapseWhitespace: true,
       removeComments: true
@@ -95,9 +107,9 @@ function cacheBustTask(){
 // Watch task: watch SCSS and JS files for changes
 // If any change, run scss and js tasks simultaneously
 function watchTask(){
-    watch([files.scssPath, files.jsPath, files.htmlPath], 
+    watch([files.scssPath, files.jsPath, files.htmlPath, files.imagePath], 
         series(
-            parallel(scssTask, jsTask, htmlTask),
+            parallel(scssTask, jsTask, htmlTask, imgSquash),
             cacheBustTask, reload
         )
     );    
@@ -107,7 +119,7 @@ function watchTask(){
 // Runs the scss and js tasks simultaneously
 // then runs cacheBust, then watch task
 exports.default = series(
-    parallel(scssTask, jsTask, htmlTask), 
+    parallel(scssTask, jsTask, htmlTask,imgSquash), 
     cacheBustTask,serve,
     watchTask
 );

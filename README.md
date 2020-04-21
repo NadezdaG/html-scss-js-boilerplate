@@ -10,12 +10,12 @@ This setup:
 * Move final images, CSS and JS files to the `/dist` folder
 
 To use webp:
-<code>
+```
 <picture>
 	<source srcset="images/img.webp" type="image/webp">
 	<img src="images/img.png" alt="www.septembris.lv custom html website from scratch" loading="lazy">
 </picture>
-</code>
+```
 To start:
 * Run `npm install`
 * Run `gulp` to run the default Gulp task
